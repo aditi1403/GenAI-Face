@@ -3,8 +3,11 @@ import dlib
 import math
 import os
 import random
-import openai
-from openai import OpenAI
+# import openai
+# from openai import OpenAI
+import torch
+from diffusers import StableDiffusionPipeline
+# from PIL import Image
 import numpy as np
 
 # # Initialize global variable
@@ -177,87 +180,95 @@ if detected_face_shape is not None:
         
 # ### IMAGE REGENERATION PART ###
     
-# client = OpenAI(
-#     api_key = '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', organization='org-CY5cxGwIRfNqOTwqlnptyRWq'
-#     )
-
-# client = OpenAI(
-#     # This is the default and can be omitted
-#     api_key=os.environ.get("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"),
-# )
-
-# Initialize the OpenAI client with the correct API key
-api_key = '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'
-os.environ['OPENAI_API_KEY'] = api_key
-client = OpenAI()
-
-# # Set up your OpenAI API key
-# openai.api_key = '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'
-
-def generate_image_with_jewel(start_image, selected_jewel):
-    response = openai.Image.create(
-        file=start_image,
-        prompt=f"Add a {selected_jewel} to the image: {start_image}",
-        n=1,
-        size="1024x1024"
-    )
-
-    return response['data'][0]['url']
-
-# Generate a new image with the selected jewelry item
-image_url = generate_image_with_jewel(start_image, selected_jewel)
-print("New image URL:", image_url)
-
-# # Define your prompt for jewels
-# prompt = "Generate an image of a person having {detected_face_shape} face wearing {selected_jewel} jewels."
-
-# # Prepare input data
-# input_data = {
-#     "image": start_image,
-#     "prompt": prompt,
-#     "max_tokens": 256,  # Adjust as needed
-#     "num_outputs": 1,   # Number of images to generate
-#     "temperature": 0.7, # Adjust as needed
-#     "top_p": 1.0       # Adjust as needed
-# }
-
-# # Call the OpenAI API to generate the image
-# # # response = openai.Image.generate(**input_data)
-# # response = client.images.generate(
-# #     # model="dall-e-3",
-# #     prompt = "Generate an image of a person having {detected_face_shape} face wearing {selected_jewel} jewels.",
-# #     # size="1024x1024",
-# #     # quality="standard",
-# #     # n=1,
+# # client = OpenAI(
+# #     api_key = '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', organization='org-CY5cxGwIRfNqOTwqlnptyRWq'
 # #     )
 
-# Call the OpenAI API to edit the image
-response = client.images.edit(
-  model="dall-e-2",
-  image=open(image_path, "rb"),
-#   mask=open("mask.png", "rb"),
-  prompt="A sunlit indoor lounge area with a pool containing a flamingo",
-  n=1,
-  size="1024x1024"
-)
+# # client = OpenAI(
+# #     # This is the default and can be omitted
+# #     api_key=os.environ.get("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"),
+# # )
 
-image_url = response.data[0].url
+# # Initialize the OpenAI client with the correct API key
+# api_key = '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'
+# os.environ['OPENAI_API_KEY'] = api_key
+# client = OpenAI()
 
-# # Get the generated image
-# generated_image_url = response['output']['url']
+# # # Set up your OpenAI API key
+# # openai.api_key = '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'
 
-# # Display or save the generated image
-# print("Generated Image URL:", generated_image_url)
+# def generate_image_with_jewel(start_image, selected_jewel):
+#     response = openai.Image.create(
+#         file=start_image,
+#         prompt=f"Add a {selected_jewel} to the image: {start_image}",
+#         n=1,
+#         size="1024x1024"
+#     )
 
-# # Save the image in a new folder
-# output_folder = "regen_images"
-# if not os.path.exists(output_folder):
-#     os.mkdir(output_folder)
+#     return response['data'][0]['url']
 
-# image_path = os.path.join(output_folder, "regen_image.jpg")
-# # cv2.imwrite(image_path, start_image)
+# # Generate a new image with the selected jewelry item
+# image_url = generate_image_with_jewel(start_image, selected_jewel)
+# print("New image URL:", image_url)
 
-# # print("Regenerated image saved.")
+# # # Define your prompt for jewels
+# # prompt = "Generate an image of a person having {detected_face_shape} face wearing {selected_jewel} jewels."
+
+# # # Prepare input data
+# # input_data = {
+# #     "image": start_image,
+# #     "prompt": prompt,
+# #     "max_tokens": 256,  # Adjust as needed
+# #     "num_outputs": 1,   # Number of images to generate
+# #     "temperature": 0.7, # Adjust as needed
+# #     "top_p": 1.0       # Adjust as needed
+# # }
+
+# # # Call the OpenAI API to generate the image
+# # # # response = openai.Image.generate(**input_data)
+# # # response = client.images.generate(
+# # #     # model="dall-e-3",
+# # #     prompt = "Generate an image of a person having {detected_face_shape} face wearing {selected_jewel} jewels.",
+# # #     # size="1024x1024",
+# # #     # quality="standard",
+# # #     # n=1,
+# # #     )
+
+# # Call the OpenAI API to edit the image
+# response = client.images.edit(
+#   model="dall-e-2",
+#   image=open(image_path, "rb"),
+# #   mask=open("mask.png", "rb"),
+#   prompt="A sunlit indoor lounge area with a pool containing a flamingo",
+#   n=1,
+#   size="1024x1024"
+# )
+
+# image_url = response.data[0].url
+
+# # # Get the generated image
+# # generated_image_url = response['output']['url']
+
+# # # Display or save the generated image
+# # print("Generated Image URL:", generated_image_url)
+
+# # # Save the image in a new folder
+# # output_folder = "regen_images"
+# # if not os.path.exists(output_folder):
+# #     os.mkdir(output_folder)
+
+# # image_path = os.path.join(output_folder, "regen_image.jpg")
+# # # cv2.imwrite(image_path, start_image)
+
+# # # print("Regenerated image saved.")
+
+# ##### stable-diffusion-google colab ##### #
+
+generator = torch.Generator().manual_seed(1024)
+pipe = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-2")  
+prompt = "a photograph of an astronaut riding a horse"
+image = pipe(prompt, generator=generator).images[0]
+image.show()
 
 
 # Release camera and close windows
