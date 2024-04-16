@@ -6,6 +6,7 @@ import numpy as np
 
 # # Initialize global variable
 global detected_face_shape
+detected_face_shape = None
 
 # Load face detection model
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -13,6 +14,8 @@ face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fronta
 # Load facial landmark detection model
 p = "shape_predictor_68_face_landmarks.dat"
 predictor = dlib.shape_predictor(p)
+
+### FACE SHAPE DETECTION PART ###
 
 # Utility functions to calculate distance and ratios:
 def euclidean_distance(point1, point2):
@@ -132,9 +135,6 @@ while True:
     if cv2.waitKey(1) == ord('q'):
         break
 
-# Release camera and close windows
-cap.release()
-cv2.destroyAllWindows()
-
 print(f"Detected face shape: {detected_face_shape}")
 print("Camera images processed.")
+
