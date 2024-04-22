@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Shape and Jewelry Recommender</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            margin-top: 50px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        img {
+            max-width: 100%;
+            margin-top: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <h1>Face Shape and Jewelry Recommender</h1>
+        <button id="capture-btn">Capture Image</button>
+        <div id="result"></div>
+        <img id="captured-img" src="" alt="Captured Image">
+        <button id="generate-btn" style="display: none;">Generate Image</button>
+        <img id="generated-img" src="" alt="Generated Image" style="display: none;">
+    </div>
+
+    <script>
+        document.getElementById('capture-btn').addEventListener('click', function() {
+            fetch('/capture', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = `Detected Face Shape: ${data.face_shape}`;
+                document.getElementById('captured-img').src = data.image_path;
+                document.getElementById('generate-btn').style.display = 'inline-block';
+            });
+        });
+
+        document.getElementById('generate-btn').addEventListener('click', function() {
+            // Implement logic to generate image here
+        });
+    </script>
+
+</body>
+</html>
